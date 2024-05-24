@@ -163,16 +163,17 @@ resource "null_resource" "configure-cat-app" {
     }
   }
 
-provisioner "remote-exec" {
+ provisioner "remote-exec" {
     inline = [
-      "sudo apt -y update || exit 1",
+      "sudo apt-get update -y || exit 1",
       "sleep 15",
-      "sudo apt -y update || exit 1",
-      "sudo apt-get install -y apt-transport-https ca-certificates curl software-properties-common || exit 1",
-      "curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add - || exit 1",
-      "sudo add-apt-repository 'deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable' || exit 1",
-      "sudo apt -y update || exit 1",
-      "sudo apt-get install -y docker-ce || exit 1",
+      "sudo apt-get update -y || exit 1",
+      "sudo apt-get install -y apt-transport-https ca-certificates curl software-properties-common gnupg || exit 1",
+      "curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg || exit 1",
+      "echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable' | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null || exit 1",
+      "sudo apt-get update -y || exit 1",
+      "sudo apt-get install -y docker-ce docker-ce-cli containerd.io || exit 1",
+      "sudo systemctl enable docker || exit 1",
       "sudo systemctl start docker || exit 1",
       "sudo docker run -d -p 80:8080 pengbai/docker-supermario || exit 1"
     ]
