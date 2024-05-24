@@ -168,13 +168,16 @@ resource "null_resource" "configure-cat-app" {
       "sudo apt -y update",
       "sleep 15",
       "sudo apt -y update",
-      "sudo apt -y install apache2",
-      "sudo systemctl start apache2",
-      "sudo chown -R ubuntu:ubuntu /var/www/html",
-      "chmod +x *.sh",
-      "PLACEHOLDER=${var.placeholder} WIDTH=${var.width} HEIGHT=${var.height} PREFIX=${var.prefix} ./deploy_app.sh",
-      "sudo apt -y install cowsay",
-      "cowsay Mooooooooooo!",
+      "sudo apt-get install -y docker-ce",
+      "sudo usermod -aG docker ubuntu",
+      "sudo systemctl enable docker",
+      "sudo systemctl start docker",
+      "sudo docker run -d -p 80:8080 pengbai/docker-supermario",
+      # "sudo chown -R ubuntu:ubuntu /var/www/html",
+      # "chmod +x *.sh",
+      # "PLACEHOLDER=${var.placeholder} WIDTH=${var.width} HEIGHT=${var.height} PREFIX=${var.prefix} ./deploy_app.sh",
+      # "sudo apt -y install cowsay",
+      # "cowsay Mooooooooooo!",
     ]
 
     connection {
